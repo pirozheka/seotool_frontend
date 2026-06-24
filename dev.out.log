@@ -1,0 +1,16 @@
+▲ Next.js 16.1.6 (webpack)
+- Local:         http://localhost:3000
+- Network:       http://172.18.0.1:3000
+
+✓ Starting...
+✓ Ready in 2.5s
+ GET / 200 in 2.7s (compile: 2.5s, render: 204ms)
+ GET /schema-faq 200 in 1079ms (compile: 1002ms, render: 78ms)
+ GET /schema-faq 200 in 52ms (compile: 6ms, render: 46ms)
+ GET /schema-faq 200 in 113ms (compile: 4ms, render: 109ms)
+ GET /markdown-converter 200 in 520ms (compile: 477ms, render: 43ms)
+ GET /page-checks 200 in 500ms (compile: 468ms, render: 32ms)
+ GET /notfounder 200 in 431ms (compile: 397ms, render: 34ms)
+ GET / 200 in 31ms (compile: 12ms, render: 20ms)
+ GET /schema-faq 200 in 43ms (compile: 15ms, render: 28ms)
+[?25h
