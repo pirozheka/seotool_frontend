@@ -9,11 +9,14 @@ import {
   FileText,
   Gauge,
   ListChecks,
+  Loader2,
   Sigma,
+  Sparkles,
   TextSearch,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { getTextAiSummary, type TextAiSummary } from "@/lib/api"
 
 const STOP_WORDS = new Set([
   "а",
@@ -101,6 +104,19 @@ type Keyword = {
   word: string
   count: number
   density: number
+}
+
+function asMetricPayload(analysis: ReturnType<typeof analyzeText>) {
+  return {
+    characters: analysis.characters,
+    words: analysis.words,
+    unique_words: analysis.uniqueWords,
+    water: Number(analysis.water.toFixed(1)),
+    spam: Number(analysis.spam.toFixed(1)),
+    average_sentence_length: Number(analysis.averageSentenceLength.toFixed(1)),
+    top_keywords: analysis.keywords.slice(0, 15),
+    local_signals: analysis.signals,
+  }
 }
 
 function getWords(text: string) {
@@ -247,13 +263,55 @@ function MetricCard({
   )
 }
 
+function ScorePill({ value }: { value: number }) {
+  const tone = scoreTone(100 - value, 30, 55)
+
+  return (
+    <span className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold ${scoreClass(tone)}`}>
+      {value}/100
+    </span>
+  )
+}
+
+function TextList({ items, fallback = "Нет данных" }: { items: string[]; fallback?: string }) {
+  if (!items.length) return <p className="text-sm text-slate-500">{fallback}</p>
+
+  return (
+    <ul className="space-y-2">
+      {items.map((item) => (
+        <li key={item} className="rounded-xl bg-slate-100 px-3 py-2 text-sm text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+          {item}
+        </li>
+      ))}
+    </ul>
+  )
+}
+
 export default function TextChecksPage() {
   const [text, setText] = useState("")
+  const [aiSummary, setAiSummary] = useState<TextAiSummary | null>(null)
+  const [aiLoading, setAiLoading] = useState(false)
+  const [aiError, setAiError] = useState<string | null>(null)
   const analysis = useMemo(() => analyzeText(text), [text])
   const waterTone = scoreTone(analysis.water, 15, 30)
   const spamTone = scoreTone(analysis.spam, 30, 60)
   const readabilityTone = scoreTone(analysis.averageSentenceLength, 18, 25)
   const hasText = text.trim().length > 0
+
+  const handleAiSummary = async () => {
+    if (!hasText || aiLoading) return
+
+    try {
+      setAiLoading(true)
+      setAiError(null)
+      const result = await getTextAiSummary(text, asMetricPayload(analysis))
+      setAiSummary(result)
+    } catch (error: unknown) {
+      setAiError(error instanceof Error ? error.message : "Не удалось получить ИИ-резюме")
+    } finally {
+      setAiLoading(false)
+    }
+  }
 
   return (
     <div className="page-shell space-y-6">
@@ -320,9 +378,20 @@ export default function TextChecksPage() {
 
         <div className="space-y-6">
           <section className="surface-card motion-fade-up motion-delay-2">
-            <div className="mb-5 flex items-center gap-2">
-              <ListChecks className="h-5 w-5 text-cyan-700 dark:text-cyan-300" />
-              <h2 className="section-title">Сводка</h2>
+            <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <ListChecks className="h-5 w-5 text-cyan-700 dark:text-cyan-300" />
+                <h2 className="section-title">Сводка</h2>
+              </div>
+              <Button
+                type="button"
+                onClick={handleAiSummary}
+                disabled={!hasText || analysis.characters < 200 || aiLoading}
+                className="h-10 rounded-xl bg-cyan-600 px-4 text-white shadow-sm shadow-cyan-700/20 hover:bg-cyan-700 dark:bg-cyan-500 dark:text-slate-950 dark:shadow-cyan-950/70 dark:hover:bg-cyan-400"
+              >
+                {aiLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                {aiLoading ? "ИИ анализирует..." : "Получить ИИ-резюме"}
+              </Button>
             </div>
 
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
@@ -362,7 +431,108 @@ export default function TextChecksPage() {
                 </div>
               )}
             </div>
+
+            {aiError ? (
+              <p className="mt-4 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700 dark:border-rose-700/50 dark:bg-rose-950/40 dark:text-rose-300">
+                {aiError}
+              </p>
+            ) : null}
           </section>
+
+          {aiSummary ? (
+            <section className="surface-card motion-fade-up motion-delay-3">
+              <div className="mb-5 flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-cyan-700 dark:text-cyan-300" />
+                <h2 className="section-title">ИИ-резюме</h2>
+              </div>
+
+              <div className="grid gap-4">
+                <div className="rounded-2xl border border-slate-200 bg-white/70 p-4 dark:border-slate-700 dark:bg-slate-900/60">
+                  <p className="text-xs uppercase tracking-wide text-slate-500">Интент</p>
+                  <p className="mt-2 text-base font-semibold text-slate-900 dark:text-slate-100">{aiSummary.intent.primary}</p>
+                  <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{aiSummary.intent.commerciality}</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {aiSummary.intent.secondary.map((item) => (
+                      <span key={item} className="rounded-full border border-cyan-200 bg-cyan-50 px-2.5 py-1 text-xs text-cyan-800 dark:border-cyan-700/50 dark:bg-cyan-950/40 dark:text-cyan-200">
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="rounded-2xl border border-slate-200 bg-white/70 p-4 dark:border-slate-700 dark:bg-slate-900/60">
+                    <div className="flex items-center justify-between gap-3">
+                      <p className="text-xs uppercase tracking-wide text-slate-500">Соответствие интенту</p>
+                      <ScorePill value={aiSummary.intent_match.score} />
+                    </div>
+                    <p className="mt-3 text-sm leading-6 text-slate-700 dark:text-slate-200">{aiSummary.intent_match.summary}</p>
+                    <div className="mt-4">
+                      <p className="mb-2 text-xs uppercase tracking-wide text-slate-500">Пробелы</p>
+                      <TextList items={aiSummary.intent_match.gaps} fallback="Существенных пробелов не найдено" />
+                    </div>
+                  </div>
+
+                  <div className="rounded-2xl border border-slate-200 bg-white/70 p-4 dark:border-slate-700 dark:bg-slate-900/60">
+                    <div className="flex items-center justify-between gap-3">
+                      <p className="text-xs uppercase tracking-wide text-slate-500">Полнота раскрытия</p>
+                      <ScorePill value={aiSummary.coverage.score} />
+                    </div>
+                    <div className="mt-4 grid gap-4">
+                      <div>
+                        <p className="mb-2 text-xs uppercase tracking-wide text-slate-500">Раскрыто</p>
+                        <TextList items={aiSummary.coverage.covered_topics} />
+                      </div>
+                      <div>
+                        <p className="mb-2 text-xs uppercase tracking-wide text-slate-500">Не хватает</p>
+                        <TextList items={aiSummary.coverage.missing_topics} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-slate-200 bg-white/70 p-4 dark:border-slate-700 dark:bg-slate-900/60">
+                  <p className="text-xs uppercase tracking-wide text-slate-500">Расширенные блоки</p>
+                  <div className="mt-3 space-y-3">
+                    {aiSummary.recommended_blocks.map((block) => (
+                      <div key={block.title} className="rounded-xl border border-slate-200 bg-white/80 p-3 dark:border-slate-700 dark:bg-slate-950/40">
+                        <p className="font-semibold text-slate-900 dark:text-slate-100">{block.title}</p>
+                        <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{block.why}</p>
+                        <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-700 dark:text-slate-200">
+                          {block.outline.map((item) => (
+                            <li key={item}>{item}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-slate-200 bg-white/70 p-4 dark:border-slate-700 dark:bg-slate-900/60">
+                  <p className="text-xs uppercase tracking-wide text-slate-500">Title / H1 / Description</p>
+                  <div className="mt-4 grid gap-4">
+                    <div>
+                      <p className="mb-2 text-sm font-semibold text-slate-800 dark:text-slate-100">Title</p>
+                      <TextList items={aiSummary.meta_recommendations.title} />
+                    </div>
+                    <div>
+                      <p className="mb-2 text-sm font-semibold text-slate-800 dark:text-slate-100">H1</p>
+                      <TextList items={aiSummary.meta_recommendations.h1} />
+                    </div>
+                    <div>
+                      <p className="mb-2 text-sm font-semibold text-slate-800 dark:text-slate-100">Meta description</p>
+                      <TextList items={aiSummary.meta_recommendations.description} />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-slate-200 bg-white/70 p-4 dark:border-slate-700 dark:bg-slate-900/60">
+                  <p className="mb-3 text-xs uppercase tracking-wide text-slate-500">Редакторские рекомендации</p>
+                  <TextList items={aiSummary.editorial_recommendations} />
+                </div>
+              </div>
+            </section>
+          ) : null}
 
           <section className="surface-card motion-fade-up motion-delay-3">
             <h2 className="section-title">Ключи и повторы</h2>

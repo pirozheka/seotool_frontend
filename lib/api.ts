@@ -98,3 +98,57 @@ export async function deleteAudit(id: string | number) {
     throw new Error(message)
   }
 }
+
+export type TextAiSummary = {
+  intent: {
+    primary: string
+    secondary: string[]
+    commerciality: string
+  }
+  intent_match: {
+    score: number
+    summary: string
+    gaps: string[]
+  }
+  coverage: {
+    score: number
+    covered_topics: string[]
+    missing_topics: string[]
+  }
+  recommended_blocks: Array<{
+    title: string
+    why: string
+    outline: string[]
+  }>
+  meta_recommendations: {
+    title: string[]
+    h1: string[]
+    description: string[]
+  }
+  editorial_recommendations: string[]
+}
+
+export async function getTextAiSummary(text: string, metrics: Record<string, unknown>) {
+  const response = await fetchWithTimeout(`${API_URL}/api/text-ai-summary/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ text, metrics }),
+    timeoutMs: 70000,
+  })
+
+  const data = await response.json().catch(() => null)
+
+  if (!response.ok) {
+    const message =
+      data?.text?.[0] ??
+      data?.detail ??
+      data?.error ??
+      "Не удалось получить ИИ-резюме"
+
+    throw new Error(message)
+  }
+
+  return data as TextAiSummary
+}
