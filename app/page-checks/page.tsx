@@ -104,7 +104,7 @@ function ResourceList({ resources }: { resources: PageResource[] }) {
       {resources.map((resource) => (
         <div
           key={`${resource.type}-${resource.url}`}
-          className="grid gap-2 rounded-xl border border-slate-200 bg-white/70 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900/60 md:grid-cols-[90px_90px_1fr]"
+          className="grid gap-2 rounded-xl border border-slate-200 bg-white/70 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900/60"
         >
           <span className="font-medium text-slate-700 dark:text-slate-200">{resource.type}</span>
           <span className="text-slate-500">{formatBytes(resource.bytes)}</span>
@@ -287,7 +287,7 @@ export default function PageChecksPage() {
           </Button>
         </div>
 
-        <div className="relative mt-6 grid grid-cols-1 gap-3 sm:grid-cols-5">
+        <div className="relative mt-6 grid grid-cols-1 gap-3">
           <Metric label="URL в форме" value={urls.length} />
           <Metric label="Статус" value={runStatusLabel(run?.status ?? null)} />
           <Metric label="Прогресс" value={`${run?.checked ?? 0}/${run?.total ?? 0}`} />
@@ -309,8 +309,8 @@ export default function PageChecksPage() {
         </div>
       </section>
 
-      <main className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(320px,420px)_1fr] lg:items-start">
-        <section className="surface-card motion-fade-up motion-delay-1 lg:sticky lg:top-6">
+      <main className="grid grid-cols-1 gap-6">
+        <section className="surface-card motion-fade-up motion-delay-1">
           <div className="space-y-2">
             <h2 className="section-title">Список URL</h2>
             <p className="section-subtitle">Каждый адрес с новой строки или через запятую. Максимум 50 URL за один запуск.</p>
@@ -476,7 +476,7 @@ export default function PageChecksPage() {
                   </p>
                 ) : null}
 
-                <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
+                <div className="mt-4 grid grid-cols-1 gap-3">
                   <Metric label="Время ответа" value={<span className="inline-flex items-center gap-1"><Clock3 className="h-4 w-4" />{currentResult.response_time_ms ?? "-"} мс</span>} />
                   <Metric label="Индексируемость" value={boolLabel(currentResult.is_indexable)} />
                   <Metric label="HTML вес" value={formatBytes(currentResult.html_weight_bytes)} />
@@ -512,7 +512,7 @@ export default function PageChecksPage() {
                       <Tags className="h-4 w-4" />
                       Разметка и modified
                     </h3>
-                    <div className="mt-4 grid gap-4 md:grid-cols-3">
+                    <div className="mt-4 grid gap-4">
                       <TypeList label="Schema.org" values={currentResult.markup_checks.schema_org_types} />
                       <TypeList
                         label="Open Graph"
@@ -528,7 +528,7 @@ export default function PageChecksPage() {
                       <ImageIcon className="h-4 w-4" />
                       Изображения
                     </h3>
-                    <div className="mt-3 grid grid-cols-2 gap-2 text-sm text-slate-700 dark:text-slate-200 md:grid-cols-4">
+                    <div className="mt-3 grid grid-cols-1 gap-2 text-sm text-slate-700 dark:text-slate-200">
                       <span>Всего: {currentResult.image_checks.total}</span>
                       <span>С alt: {currentResult.image_checks.with_alt}</span>
                       <span>Без alt: {currentResult.image_checks.missing_alt}</span>

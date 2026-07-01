@@ -277,7 +277,7 @@ export default async function AuditPage({ params }: AuditPageProps) {
           </div>
         </div>
 
-        <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-6 grid grid-cols-1 gap-3">
           <FieldItem label="HTTP код" value={audit.server_status_code ?? "-"} />
           <FieldItem label="Время ответа" value={audit.response_time_ms != null ? `${audit.response_time_ms} мс` : "-"} />
           <FieldItem label="Финальный URL" value={<span className="break-all">{audit.final_url ?? "-"}</span>} />
@@ -289,7 +289,7 @@ export default async function AuditPage({ params }: AuditPageProps) {
 
       <section className="surface-card motion-fade-up motion-delay-1">
         <h2 className="section-title">Параметры страницы</h2>
-        <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
+        <div className="mt-4 grid grid-cols-1 gap-3">
           <FieldItem label="Title" value={audit.title || "-"} />
           <FieldItem label="H1" value={audit.h1 || "-"} />
           <FieldItem label="Description" value={audit.meta_description || "-"} />
@@ -301,7 +301,7 @@ export default async function AuditPage({ params }: AuditPageProps) {
 
       <section className="surface-card motion-fade-up motion-delay-2">
         <h2 className="section-title">Технические проверки</h2>
-        <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
+        <div className="mt-4 grid grid-cols-1 gap-3">
           <FieldItem
             label="HTTP → HTTPS"
             value={siteChecks?.protocols?.http_to_https == null ? "-" : <BoolBadge value={siteChecks.protocols.http_to_https} />}
@@ -394,7 +394,7 @@ export default async function AuditPage({ params }: AuditPageProps) {
 
         <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50/70 p-4 dark:border-slate-700/70 dark:bg-slate-900/50">
           <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-200">Типы разметки</h3>
-          <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
+          <div className="mt-3 grid grid-cols-1 gap-3">
             <FieldItem label="Schema.org types" value={<TypeBadges types={markupChecks.schema_org_types ?? []} />} />
             <FieldItem label="Open Graph types" value={<TypeBadges types={markupChecks.opengraph_types ?? []} />} />
           </div>
@@ -403,7 +403,7 @@ export default async function AuditPage({ params }: AuditPageProps) {
 
       <section className="surface-card motion-fade-up motion-delay-3">
         <h2 className="section-title">Инфраструктура и безопасность</h2>
-        <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-4 grid grid-cols-1 gap-3">
           <FieldItem
             label="SSL валиден сейчас"
             value={sslCertificate.valid_now == null ? "-" : <BoolBadge value={sslCertificate.valid_now} />}
@@ -473,7 +473,7 @@ export default async function AuditPage({ params }: AuditPageProps) {
         ) : null}
       </section>
 
-      <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <section className="grid grid-cols-1 gap-6">
         <div className="surface-card motion-fade-up motion-delay-2">
           <h2 className="section-title">Предупреждения страницы</h2>
           {audit.warnings?.length ? (

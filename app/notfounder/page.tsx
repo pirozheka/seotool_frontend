@@ -175,7 +175,7 @@ export default function NotfounderPage() {
           </Button>
         </div>
 
-        <div className="relative mt-6 grid grid-cols-1 gap-3 sm:grid-cols-4">
+        <div className="relative mt-6 grid grid-cols-1 gap-3">
           <div className="rounded-2xl border border-slate-200/80 bg-white/90 px-4 py-3 dark:border-slate-700/70 dark:bg-slate-900/70">
             <p className="text-xs uppercase tracking-wide text-slate-500">Найдено ссылок</p>
             <p className="mt-1 text-2xl font-semibold text-slate-900 dark:text-slate-100">{total}</p>
@@ -195,8 +195,8 @@ export default function NotfounderPage() {
         </div>
       </section>
 
-      <main className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(320px,420px)_1fr] lg:items-start">
-        <section className="surface-card motion-fade-up motion-delay-1 lg:sticky lg:top-6">
+      <main className="grid grid-cols-1 gap-6">
+        <section className="surface-card motion-fade-up motion-delay-1">
           <div className="space-y-2">
             <h2 className="section-title">Новая проверка</h2>
             <p className="section-subtitle">Введите страницу, с которой нужно собрать ссылки и проверить их HTTP-статусы.</p>

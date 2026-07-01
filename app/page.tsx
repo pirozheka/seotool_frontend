@@ -86,7 +86,7 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="relative mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <div className="relative mt-6 grid grid-cols-1 gap-3">
           <div className="rounded-2xl border border-slate-200/80 bg-white/90 px-4 py-3 dark:border-slate-700/70 dark:bg-slate-900/70">
             <p className="text-xs uppercase tracking-wide text-slate-500">Всего аудитов</p>
             <p className="mt-1 text-2xl font-semibold text-slate-900 dark:text-slate-100">{audits.length}</p>
@@ -105,7 +105,7 @@ export default function Home() {
         </p>
       </section>
 
-      <main className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(320px,420px)_1fr] lg:items-start">
+      <main className="grid grid-cols-1 gap-6">
         <SiteInput onAuditCreated={handleAuditCreated} />
         <Audits
           audits={audits}

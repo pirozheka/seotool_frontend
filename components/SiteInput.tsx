@@ -37,7 +37,7 @@ export function SiteInput({ onAuditCreated }: SiteInputProps) {
   }
 
   return (
-    <section className="surface-card motion-fade-up motion-delay-1 lg:sticky lg:top-6">
+    <section className="surface-card motion-fade-up motion-delay-1">
       <div className="space-y-2">
         <h2 className="section-title">Новый аудит</h2>
         <p className="section-subtitle">Введите домен и запустите проверку технических параметров сайта.</p>

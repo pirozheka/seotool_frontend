@@ -214,7 +214,7 @@ export default function MarkdownConverterPage() {
         </div>
       </section>
 
-      <main className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <main className="grid grid-cols-1 gap-6">
         <section className="surface-card motion-fade-up motion-delay-1">
           <div className="space-y-2">
             <h2 className="section-title">Markdown</h2>
