@@ -327,7 +327,7 @@ export default function TextChecksPage() {
           </p>
         </div>
 
-        <div className="relative mt-6 grid grid-cols-1 gap-3">
+        <div className="relative mt-6 grid grid-cols-1 gap-3 sm:grid-cols-4">
           <MetricCard icon={<FileText className="h-5 w-5" />} label="Символы" value={analysis.characters} hint={`${analysis.charactersWithoutSpaces} без пробелов`} />
           <MetricCard icon={<Sigma className="h-5 w-5" />} label="Слова" value={analysis.words} hint={`${analysis.uniqueWords} уникальных`} />
           <MetricCard
@@ -394,7 +394,7 @@ export default function TextChecksPage() {
               </Button>
             </div>
 
-            <div className="grid grid-cols-1 gap-3">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               <div className="rounded-2xl border border-slate-200 bg-white/70 p-4 dark:border-slate-700 dark:bg-slate-900/60">
                 <p className="text-xs uppercase tracking-wide text-slate-500">Предложения</p>
                 <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-slate-100">{analysis.sentences}</p>
@@ -460,7 +460,7 @@ export default function TextChecksPage() {
                   </div>
                 </div>
 
-                <div className="grid gap-4">
+                <div className="grid gap-4 md:grid-cols-2">
                   <div className="rounded-2xl border border-slate-200 bg-white/70 p-4 dark:border-slate-700 dark:bg-slate-900/60">
                     <div className="flex items-center justify-between gap-3">
                       <p className="text-xs uppercase tracking-wide text-slate-500">Соответствие интенту</p>

@@ -133,8 +133,8 @@ export default function SchemaFaqPage() {
         </div>
       </section>
 
-      <main className="grid grid-cols-1 gap-6">
-        <section className="surface-card motion-fade-up motion-delay-1">
+      <main className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(320px,480px)_1fr] lg:items-start">
+        <section className="surface-card motion-fade-up motion-delay-1 lg:sticky lg:top-6">
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="section-title">Вопросы и ответы</h2>
