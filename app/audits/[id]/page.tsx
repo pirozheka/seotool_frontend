@@ -45,6 +45,13 @@ type PageWeightCheck = {
   warnings?: string[]
 }
 
+type AuditWarning =
+  | string
+  | {
+      message?: string
+      code_snippets?: string[]
+    }
+
 type ServerSecurityHeader = {
   header?: string
   present?: boolean
@@ -194,6 +201,36 @@ function TypeBadges({ types }: { types: string[] }) {
         </span>
       ))}
     </div>
+  )
+}
+
+function getWarningMessage(warning: AuditWarning) {
+  return typeof warning === "string" ? warning : warning.message || "Предупреждение"
+}
+
+function getWarningSnippets(warning: AuditWarning) {
+  return typeof warning === "string" ? [] : asArray<string>(warning.code_snippets)
+}
+
+function WarningItem({ warning }: { warning: AuditWarning }) {
+  const snippets = getWarningSnippets(warning)
+
+  return (
+    <li className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800 dark:border-amber-700/50 dark:bg-amber-950/40 dark:text-amber-200">
+      <p>{getWarningMessage(warning)}</p>
+      {snippets.length ? (
+        <div className="mt-3 space-y-2">
+          {snippets.map((snippet, index) => (
+            <pre
+              key={`${snippet}-${index}`}
+              className="max-h-48 overflow-auto rounded-lg border border-amber-200 bg-white/80 p-3 text-xs leading-5 text-slate-800 dark:border-amber-700/50 dark:bg-slate-950/70 dark:text-slate-100"
+            >
+              <code>{snippet}</code>
+            </pre>
+          ))}
+        </div>
+      ) : null}
+    </li>
   )
 }
 
@@ -441,10 +478,8 @@ export default async function AuditPage({ params }: AuditPageProps) {
           <h2 className="section-title">Предупреждения страницы</h2>
           {audit.warnings?.length ? (
             <ul className="mt-3 space-y-2">
-              {audit.warnings.map((warning: string, index: number) => (
-                <li key={index} className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800 dark:border-amber-700/50 dark:bg-amber-950/40 dark:text-amber-200">
-                  {warning}
-                </li>
+              {audit.warnings.map((warning: AuditWarning, index: number) => (
+                <WarningItem key={index} warning={warning} />
               ))}
             </ul>
           ) : (

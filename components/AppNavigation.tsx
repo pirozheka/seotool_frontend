@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { BarChart3, Braces, Code, Files, SearchX } from "lucide-react"
+import { BarChart3, Braces, Code, Files, SearchX, TextSearch } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
@@ -24,6 +24,12 @@ const items = [
     label: "Страницы",
     description: "Массовая проверка",
     icon: Files,
+  },
+  {
+    href: "/text-checks",
+    label: "Тексты",
+    description: "SEO-анализ",
+    icon: TextSearch,
   },
   {
     href: "/markdown-converter",

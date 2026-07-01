@@ -81,6 +81,44 @@ function convertTables(markdown: string) {
   return output.join("\n")
 }
 
+function convertLists(markdown: string) {
+  const lines = markdown.split("\n")
+  const output: string[] = []
+  let listItems: string[] = []
+  let currentListType: "ul" | "ol" | null = null
+
+  const flushList = () => {
+    if (!currentListType || listItems.length === 0) return
+    output.push(`<${currentListType}>${listItems.join("")}</${currentListType}>`)
+    listItems = []
+    currentListType = null
+  }
+
+  for (const line of lines) {
+    const unorderedMatch = line.match(/^\s*[*+-]\s+(.*)$/)
+    const orderedMatch = line.match(/^\s*\d+\.\s+(.*)$/)
+    const nextListType = unorderedMatch ? "ul" : orderedMatch ? "ol" : null
+    const itemContent = unorderedMatch?.[1] ?? orderedMatch?.[1]
+
+    if (!nextListType || itemContent === undefined) {
+      flushList()
+      output.push(line)
+      continue
+    }
+
+    if (currentListType && currentListType !== nextListType) {
+      flushList()
+    }
+
+    currentListType = nextListType
+    listItems.push(`<li>${itemContent}</li>`)
+  }
+
+  flushList()
+
+  return output.join("\n")
+}
+
 export default function MarkdownConverterPage() {
   const [markdown, setMarkdown] = useState("")
   const [html, setHtml] = useState("")
@@ -125,17 +163,8 @@ export default function MarkdownConverterPage() {
     // Blockquotes
     converted = converted.replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>')
     
-    // Unordered lists
-    converted = converted.replace(/^\* (.*$)/gim, '<li>$1</li>')
-    converted = converted.replace(/^- (.*$)/gim, '<li>$1</li>')
-    converted = converted.replace(/^\+ (.*$)/gim, '<li>$1</li>')
-    
-    // Ordered lists
-    converted = converted.replace(/^\d+\. (.*$)/gim, '<li>$1</li>')
-    
-    // Wrap lists
-    converted = converted.replace(/(<li>.*<\/li>)/g, '<ul>$1</ul>')
-    converted = converted.replace(/(<li>.*<\/li>)/g, '<ol>$1</ol>')
+    // Lists
+    converted = convertLists(converted)
     
     // Horizontal rule
     converted = converted.replace(/^---$/gm, '<hr>')
