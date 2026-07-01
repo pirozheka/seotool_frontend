@@ -49,7 +49,7 @@ export function AppNavigation() {
   const pathname = usePathname()
 
   return (
-    <header className="mx-auto w-full max-w-none px-4 pt-5 sm:px-6 lg:px-10">
+    <header className="mx-auto w-full max-w-6xl px-4 pt-5 sm:px-6 lg:px-10">
       <nav className="flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200/80 bg-white/80 p-2 shadow-[0_14px_40px_-32px_rgba(15,23,42,0.45)] backdrop-blur-sm dark:border-slate-700/65 dark:bg-slate-950/70">
         {items.map((item) => {
           const Icon = item.icon
